@@ -218,56 +218,75 @@
         }
 
         // ======= [ 5. 載入歷史紀錄 ] =======
-        async function loadHistory() {
-            showPage('historyPage');
-            const list = document.getElementById('historyList');
-            list.innerHTML = `<div class="text-center py-20 text-emerald-600"><div class="loader mb-2"></div><br>讀取最新紀錄中...</div>`;
+async function loadHistory() {
+    showPage('historyPage');
+    const list = document.getElementById('historyList');
+    list.innerHTML = `<div class="text-center py-20 text-emerald-600"><div class="loader mb-2"></div><br>讀取最新紀錄中...</div>`;
 
-            try {
-                const res = await fetch(GAS_URL);
-                const data = await res.json();
-                list.innerHTML = "";
+    try {
+        const res = await fetch(GAS_URL);
+        const data = await res.json();
+        list.innerHTML = "";
 
-                if (data.length === 0) {
-                    list.innerHTML = `<div class="text-center py-20 text-gray-400 font-bold">目前尚無巡守紀錄。</div>`;
-                    return;
-                }
-
-                data.forEach(item => {
-                    const date = new Date(item.timestamp).toLocaleString('zh-TW', { hour12: false });
-                    const photos = item.photoUrl ? item.photoUrl.split("\n") : [];
-                    
-                    let photoHtml = `<div class="grid grid-cols-3 gap-2 mt-3">`;
-                    photos.forEach(url => {
-                        if (url.trim()) {
-                            photoHtml += `<a href="${url}" target="_blank"><img src="${url}" class="w-full h-24 object-cover rounded-xl bg-slate-100 border border-slate-100"></a>`;
-                        }
-                    });
-                    photoHtml += `</div>`;
-
-                    list.innerHTML += `
-                        <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-100">
-                            <div class="px-5 py-3 bg-slate-50 flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-tighter">
-                                <span>${date}</span>
-                                <span class="text-emerald-700">${item.area}</span>
-                            </div>
-                            <div class="p-5">
-                                <p class="font-bold text-slate-800 text-lg mb-1">${item.turtleType} <span class="text-emerald-600 font-black">(${item.count}隻)</span></p>
-                                <p class="text-sm text-slate-500 leading-relaxed mb-2">${item.note}</p>
-                                ${photos.length > 0 ? photoHtml : ''}
-                            </div>
-                            <div class="p-4 bg-amber-50/50 border-t border-amber-100">
-                                <p class="text-[10px] font-black text-amber-600 uppercase mb-1 flex items-center gap-1">📢 管理員指導回饋</p>
-                                <p class="text-sm text-slate-700 italic font-medium">${item.review || '待評核回覆中...'}</p>
-                            </div>
-                        </div>
-                    `;
-                });
-            } catch (err) {
-                console.error(err);
-                list.innerHTML = `<div class="p-6 bg-red-50 text-red-600 rounded-2xl text-center text-sm font-bold">無法載入紀錄，請確認 GAS 部署是否正確。</div>`;
-            }
+        if (data.length === 0) {
+            list.innerHTML = `<div class="text-center py-20 text-gray-400 font-bold">目前尚無巡守紀錄。</div>`;
+            return;
         }
+
+        data.forEach(item => {
+            const date = new Date(item.timestamp).toLocaleString('zh-TW', { hour12: false });
+            
+            // --- 核心修改：處理圖片顯示 ---
+            // 將 G 欄的字串依照換行符號拆分成陣列
+            const photos = item.photoUrl ? item.photoUrl.split("\n") : [];
+            
+            let photoHtml = "";
+            if (photos.length > 0 && photos[0].trim() !== "") {
+                // 使用 Tailwind 的 Grid 佈局，建立 3 欄縮圖
+                photoHtml = `<div class="grid grid-cols-3 gap-2 mt-3">`;
+                photos.forEach(url => {
+                    if (url.includes("drive.google.com")) {
+                        // 將 Google Drive 的一般網址轉為可直接顯示的圖片連結 (thumbnail)
+                        const fileId = url.split('id=')[1] || url.split('/d/')[1].split('/')[0];
+                        const thumbUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w300`;
+                        
+                        photoHtml += `
+                            <a href="${url}" target="_blank" class="block">
+                                <img src="${thumbUrl}" 
+                                     class="w-full h-24 object-cover rounded-xl bg-slate-100 border border-slate-200 shadow-sm hover:opacity-80 transition"
+                                     onerror="this.src='https://placehold.co/100x100?text=圖片載入中'">
+                            </a>`;
+                    }
+                });
+                photoHtml += `</div>`;
+            }
+            // ----------------------------
+
+            list.innerHTML += `
+                <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-100 mb-6">
+                    <div class="px-5 py-3 bg-slate-50 flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                        <span>${date}</span>
+                        <span class="text-emerald-700">${item.area}</span>
+                    </div>
+                    <div class="p-5">
+                        <p class="font-bold text-slate-800 text-lg mb-1">${item.turtleType} <span class="text-emerald-600 font-black">(${item.count}隻)</span></p>
+                        <p class="text-sm text-slate-500 leading-relaxed mb-2">${item.note}</p>
+                        
+                        ${photoHtml}
+
+                    </div>
+                    <div class="p-4 bg-amber-50/50 border-t border-amber-100">
+                        <p class="text-[10px] font-black text-amber-600 uppercase mb-1 flex items-center gap-1">📢 管理員指導回饋</p>
+                        <p class="text-sm text-slate-700 italic font-medium">${item.review || '待評核回覆中...'}</p>
+                    </div>
+                </div>
+            `;
+        });
+    } catch (err) {
+        console.error(err);
+        list.innerHTML = `<div class="p-6 bg-red-50 text-red-600 rounded-2xl text-center text-sm font-bold">無法載入紀錄。</div>`;
+    }
+}
 
         // ======= [ 6. 初始狀態檢查 ] =======
         window.onload = () => {
