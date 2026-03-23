@@ -195,11 +195,14 @@
 
                 // 發送數據到 Google Apps Script
                 await fetch(GAS_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
+    method: "POST",
+    mode: "no-cors", // 保持 no-cors
+    cache: "no-cache",
+    headers: {
+        "Content-Type": "text/plain;charset=utf-8", // 改用 text/plain 避開 preflight 檢查
+    },
+    body: JSON.stringify(payload)
+});
 
                 alert("✅ 提交成功！資料已存入雲端硬碟與試算表。");
                 document.getElementById('logForm').reset();
