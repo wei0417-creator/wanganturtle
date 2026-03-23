@@ -3,47 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>綠蠵龜保育志工平台 v2.0</title>
+    <title>綠蠵龜保育志工平台 v2.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .page { display: none; }
         .page.active { display: block; }
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #059669; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* 防止手機版輸入框被擋住 */
+        input, select, textarea { font-size: 16px !important; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body class="bg-slate-50 min-h-screen font-sans">
 
     <div id="loginPage" class="page active">
         <div class="bg-emerald-900 flex items-center justify-center min-h-screen p-6">
             <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-sm text-center">
-                <div class="text-7xl mb-6">🐢</div>
+                <div class="text-7xl mb-6 text-emerald-600">🐢</div>
                 <h1 class="text-2xl font-bold text-emerald-800">望安巡守系統</h1>
-                <p class="text-gray-400 text-sm mb-8 italic">Turtle Conservation System</p>
-                <input type="email" id="loginEmail" placeholder="輸入志工信箱" class="w-full px-5 py-3 border-2 border-slate-100 rounded-xl mb-4 outline-none focus:border-emerald-500 transition-all">
-                <button onclick="handleLogin()" class="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-emerald-700 transition">登入平台</button>
+                <p class="text-gray-400 text-sm mb-8">志工內部作業平台</p>
+                <div class="space-y-4">
+                    <input type="email" id="loginEmail" placeholder="請輸入志工信箱" 
+                           class="w-full px-5 py-3 border-2 border-slate-100 rounded-xl outline-none focus:border-emerald-500 transition-all">
+                    <button onclick="handleLogin()" 
+                            class="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-emerald-700 active:scale-95 transition">
+                        登入平台
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="formPage" class="page">
-        <nav class="bg-emerald-800 text-white p-4 sticky top-0 z-10 flex justify-between items-center shadow-md">
-            <span class="font-bold tracking-wider">🐢 新增巡守日誌</span>
-            <button onclick="loadHistory()" class="text-xs bg-emerald-700 px-4 py-2 rounded-full border border-emerald-500">歷史紀錄</button>
+        <nav class="bg-emerald-800 text-white p-4 sticky top-0 z-20 flex justify-between items-center shadow-md">
+            <span class="font-bold flex items-center gap-2">📝 新增巡守日誌</span>
+            <button onclick="loadHistory()" class="text-xs bg-emerald-700 px-4 py-2 rounded-full border border-emerald-500 hover:bg-emerald-600">歷史紀錄</button>
         </nav>
 
         <div class="max-w-lg mx-auto p-4 pb-24">
             <form id="logForm" class="bg-white rounded-3xl shadow-sm p-6 space-y-6 border border-slate-100">
+                
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-black text-slate-400 mb-2 uppercase">巡守地區</label>
+                        <label class="block text-xs font-black text-slate-400 mb-2 uppercase tracking-widest">巡守地區</label>
                         <select id="area" class="w-full p-3 bg-slate-50 border-none rounded-xl text-sm outline-none ring-1 ring-slate-200 focus:ring-emerald-500">
                             <option>水庫保育區</option><option>天台山保育區</option><option>土地公港保育區</option>
                             <option>萬善宮保育區</option><option>網胺口保育區</option><option>天后宮保育區</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-black text-slate-400 mb-2 uppercase">發現種類</label>
+                        <label class="block text-xs font-black text-slate-400 mb-2 uppercase tracking-widest">發現種類</label>
                         <select id="turtleType" class="w-full p-3 bg-slate-50 border-none rounded-xl text-sm outline-none ring-1 ring-slate-200 focus:ring-emerald-500">
                             <option>未發現</option><option>綠蠵龜</option><option>赤蠵龜</option>
                             <option>欖蠵龜</option><option>革龜</option><option>玳瑁</option>
@@ -52,23 +61,28 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-black text-slate-400 mb-2 uppercase">海龜數量 (隻)</label>
-                    <input type="number" id="count" value="0" min="0" class="w-full p-3 bg-slate-50 rounded-xl outline-none ring-1 ring-slate-200 focus:ring-emerald-500">
+                    <label class="block text-xs font-black text-slate-400 mb-2 uppercase tracking-widest">海龜數量 (隻)</label>
+                    <input type="number" id="count" value="0" min="0" 
+                           class="w-full p-3 bg-slate-50 rounded-xl outline-none ring-1 ring-slate-200 focus:ring-emerald-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-black text-slate-400 mb-2 uppercase">巡守心得紀錄</label>
-                    <textarea id="note" rows="4" class="w-full p-3 bg-slate-50 rounded-xl outline-none ring-1 ring-slate-200 focus:ring-emerald-500" placeholder="描述現場環境或海龜狀況..."></textarea>
+                    <label class="block text-xs font-black text-slate-400 mb-2 uppercase tracking-widest">巡守心得紀錄</label>
+                    <textarea id="note" rows="4" 
+                              class="w-full p-3 bg-slate-50 rounded-xl outline-none ring-1 ring-slate-200 focus:ring-emerald-500" 
+                              placeholder="描述今日沙灘環境或海龜蹤跡..."></textarea>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-black text-slate-400 mb-2 uppercase">照片上傳 (最多 5 張)</label>
-                    <input type="file" id="photoFiles" accept="image/*" multiple class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-emerald-50 file:text-emerald-700 font-bold">
-                    <p class="text-[10px] text-slate-400 mt-2">💡 系統會自動壓縮圖片以加速上傳</p>
+                <div class="p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                    <label class="block text-xs font-black text-emerald-700 mb-3 uppercase tracking-widest">📷 照片上傳 (最多 5 張)</label>
+                    <input type="file" id="photoFiles" accept="image/*" multiple 
+                           class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-emerald-600 file:text-white font-bold hover:file:bg-emerald-700">
+                    <p class="text-[10px] text-slate-400 mt-3 leading-relaxed">💡 按住照片可多選。系統會自動壓縮圖片以加速上傳，請在訊號良好處提交。</p>
                 </div>
 
-                <button type="button" id="submitBtn" onclick="submitLog()" class="w-full bg-emerald-600 text-white py-5 rounded-2xl font-bold text-xl shadow-xl hover:bg-emerald-700 transition-all flex justify-center items-center gap-3">
-                    <span id="btnText">提交日誌</span>
+                <button type="button" id="submitBtn" onclick="submitLog()" 
+                        class="w-full bg-emerald-600 text-white py-5 rounded-2xl font-bold text-xl shadow-xl hover:bg-emerald-700 transition-all flex justify-center items-center gap-3 active:scale-95">
+                    <span id="btnText">確認提交日誌</span>
                     <span id="btnLoader" class="loader hidden"></span>
                 </button>
             </form>
@@ -76,34 +90,45 @@
     </div>
 
     <div id="historyPage" class="page">
-        <nav class="bg-emerald-800 text-white p-4 sticky top-0 z-10 flex justify-between items-center shadow-md">
-            <button onclick="showPage('formPage')" class="text-sm bg-emerald-700 px-4 py-1.5 rounded-full">← 返回</button>
-            <span class="font-bold">巡守紀錄流</span>
+        <nav class="bg-emerald-800 text-white p-4 sticky top-0 z-20 flex justify-between items-center shadow-md">
+            <button onclick="showPage('formPage')" class="text-sm bg-emerald-700 px-4 py-1.5 rounded-full border border-emerald-500">← 返回填寫</button>
+            <span class="font-bold">巡守歷史紀錄</span>
             <button onclick="handleLogout()" class="text-xs opacity-50">登出</button>
         </nav>
-        <div id="historyList" class="max-w-lg mx-auto p-4 space-y-6"></div>
+        <div id="historyList" class="max-w-lg mx-auto p-4 space-y-6 pb-20">
+            </div>
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbx3cNs7cR2tb5ImvG3UYEf6oVKMnnzPp0bOAVMp9f0MVSaXDYyv179Va56X-0d07OJiFA/exec"; // 👈 務必修改這裡
+        // ======= [ 1. 基礎設定 ] =======
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbx3cNs7cR2tb5ImvG3UYEf6oVKMnnzPp0bOAVMp9f0MVSaXDYyv179Va56X-0d07OJiFA/exec"; // 👈 請在此更換為您的部署網址
 
+        // ======= [ 2. 頁面控制 ] =======
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            window.scrollTo(0,0);
+            const target = document.getElementById(pageId);
+            if (target) target.classList.add('active');
+            window.scrollTo(0, 0);
         }
 
         function handleLogin() {
             const email = document.getElementById('loginEmail').value;
-            if(email.includes('@')) {
+            if (email && email.includes('@')) {
                 localStorage.setItem('monitor_user', email);
                 showPage('formPage');
-            } else { alert("請輸入正確信箱"); }
+            } else {
+                alert("請輸入有效的電子郵件格式！");
+            }
         }
 
-        function handleLogout() { localStorage.clear(); location.reload(); }
+        function handleLogout() {
+            if (confirm("確定要登出系統嗎？")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
 
-        // 圖片壓縮函式
+        // ======= [ 3. 圖片壓縮邏輯 ] =======
         async function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -113,108 +138,139 @@
                     img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800; // 壓縮後的寬度
+                        const MAX_WIDTH = 800; // 限制寬度在 800px 以內
                         let width = img.width;
                         let height = img.height;
-                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                        canvas.width = width; canvas.height = height;
+
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.7)); // 0.7 是品質縮放
+                        // 輸出 JPEG 格式，品質設定為 0.7
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
                     };
                 };
             });
         }
 
+        // ======= [ 4. 提交數據 (含圖片) ] =======
         async function submitLog() {
-            const btn = document.getElementById('submitBtn');
-            const loader = document.getElementById('btnLoader');
+            const note = document.getElementById('note').value;
             const files = document.getElementById('photoFiles').files;
             
-            if(!document.getElementById('note').value) return alert("請填寫心得！");
-            if(files.length > 5) return alert("最多只能選擇 5 張照片");
+            if (!note) return alert("請填寫心得內容！");
+            if (files.length > 5) return alert("一次最多隻能上傳 5 張照片！");
+
+            const btn = document.getElementById('submitBtn');
+            const loader = document.getElementById('btnLoader');
+            const btnText = document.getElementById('btnText');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
-            document.getElementById('btnText').innerText = "處理圖片中...";
+            btnText.innerText = "正在處理圖片...";
 
             try {
-                // 壓縮所有圖片
+                // 壓縮圖片
                 const compressedImages = [];
-                for(let file of files) {
+                for (let file of files) {
                     const base64 = await compressImage(file);
                     compressedImages.push(base64);
                 }
 
-                document.getElementById('btnText').innerText = "上傳雲端中...";
+                btnText.innerText = "正在同步至試算表...";
+
                 const payload = {
                     user: localStorage.getItem('monitor_user'),
                     area: document.getElementById('area').value,
                     turtleType: document.getElementById('turtleType').value,
                     count: document.getElementById('count').value,
-                    note: document.getElementById('note').value,
+                    note: note,
                     images: compressedImages
                 };
 
+                // 發送數據到 Google Apps Script
                 await fetch(GAS_URL, {
                     method: "POST",
                     mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
 
-                alert("✅ 提交成功！");
+                alert("✅ 提交成功！資料已存入雲端硬碟與試算表。");
                 document.getElementById('logForm').reset();
-                loadHistory();
+                loadHistory(); // 跳轉至紀錄頁
             } catch (err) {
-                alert("❌ 失敗：" + err);
+                console.error(err);
+                alert("❌ 提交失敗，請檢查網路或系統設定。");
             } finally {
                 btn.disabled = false;
                 loader.classList.add('hidden');
-                document.getElementById('btnText').innerText = "提交日誌";
+                btnText.innerText = "確認提交日誌";
             }
         }
 
+        // ======= [ 5. 載入歷史紀錄 ] =======
         async function loadHistory() {
             showPage('historyPage');
             const list = document.getElementById('historyList');
-            list.innerHTML = `<div class="text-center py-20"><div class="loader"></div></div>`;
+            list.innerHTML = `<div class="text-center py-20 text-emerald-600"><div class="loader mb-2"></div><br>讀取最新紀錄中...</div>`;
 
             try {
                 const res = await fetch(GAS_URL);
                 const data = await res.json();
                 list.innerHTML = "";
 
+                if (data.length === 0) {
+                    list.innerHTML = `<div class="text-center py-20 text-gray-400 font-bold">目前尚無巡守紀錄。</div>`;
+                    return;
+                }
+
                 data.forEach(item => {
-                    const date = new Date(item.timestamp).toLocaleString('zh-TW');
-                    // 處理多張照片連結，轉成可顯示的小圖
+                    const date = new Date(item.timestamp).toLocaleString('zh-TW', { hour12: false });
                     const photos = item.photoUrl ? item.photoUrl.split("\n") : [];
-                    let photoHtml = `<div class="grid grid-cols-3 gap-1 mt-2">`;
+                    
+                    let photoHtml = `<div class="grid grid-cols-3 gap-2 mt-3">`;
                     photos.forEach(url => {
-                        photoHtml += `<a href="${url}" target="_blank"><img src="${url}" class="w-full h-20 object-cover rounded-md bg-slate-100"></a>`;
+                        if (url.trim()) {
+                            photoHtml += `<a href="${url}" target="_blank"><img src="${url}" class="w-full h-24 object-cover rounded-xl bg-slate-100 border border-slate-100"></a>`;
+                        }
                     });
                     photoHtml += `</div>`;
 
                     list.innerHTML += `
-                        <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100">
-                            <div class="p-4 bg-slate-50 flex justify-between text-[10px] font-black text-slate-400">
-                                <span>${date}</span><span class="text-emerald-600">${item.area}</span>
+                        <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-100">
+                            <div class="px-5 py-3 bg-slate-50 flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                                <span>${date}</span>
+                                <span class="text-emerald-700">${item.area}</span>
                             </div>
-                            <div class="p-4">
-                                <p class="font-bold text-slate-800 mb-1">${item.turtleType} (${item.count}隻)</p>
-                                <p class="text-sm text-slate-500 leading-relaxed">${item.note}</p>
+                            <div class="p-5">
+                                <p class="font-bold text-slate-800 text-lg mb-1">${item.turtleType} <span class="text-emerald-600 font-black">(${item.count}隻)</span></p>
+                                <p class="text-sm text-slate-500 leading-relaxed mb-2">${item.note}</p>
                                 ${photos.length > 0 ? photoHtml : ''}
                             </div>
                             <div class="p-4 bg-amber-50/50 border-t border-amber-100">
-                                <p class="text-[10px] font-black text-amber-600 uppercase mb-1">📢 管理員回饋</p>
-                                <p class="text-sm text-slate-600 italic font-medium">${item.review || '待審核...'}</p>
+                                <p class="text-[10px] font-black text-amber-600 uppercase mb-1 flex items-center gap-1">📢 管理員指導回饋</p>
+                                <p class="text-sm text-slate-700 italic font-medium">${item.review || '待評核回覆中...'}</p>
                             </div>
                         </div>
                     `;
                 });
-            } catch (err) { list.innerHTML = "載入失敗"; }
+            } catch (err) {
+                console.error(err);
+                list.innerHTML = `<div class="p-6 bg-red-50 text-red-600 rounded-2xl text-center text-sm font-bold">無法載入紀錄，請確認 GAS 部署是否正確。</div>`;
+            }
         }
 
-        window.onload = () => { if(localStorage.getItem('monitor_user')) showPage('formPage'); };
+        // ======= [ 6. 初始狀態檢查 ] =======
+        window.onload = () => {
+            const user = localStorage.getItem('monitor_user');
+            if (user) showPage('formPage');
+        };
     </script>
 </body>
 </html>
